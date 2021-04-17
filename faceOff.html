@@ -2,7 +2,8 @@
 <!--V3 - Make difficulty select a 3 button choice-->
 <!--V4 - make game over only on click on wrong face instead of anywhere but correct face-->
 <!--V5 - Add random Face generation using an array-->
-<!--V6 - Make noise and face grow when click on the correct face, make correct face grow when click on the wrong face-->
+<!--V6 - make noise and face grow when click on the correct face, make correct face grow when click on the wrong face-->
+<!--V7 - Turn all alerts into buttons instead of browser alerts-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,7 +37,7 @@
             left: 50px;
         }
 
-        #buttonBody {
+        .buttonBody {
             width: 200px;
             height: 175px;
             border: 1px solid black;
@@ -44,6 +45,7 @@
             text-align: center;
             left: 36%;
             background: aquamarine;
+            position: relative;
         }
 
         .transform { /*a CSS class to make the face grow, activated by the grow() function*/
@@ -53,6 +55,7 @@
 
     </style>
 </head>
+
 <body>
 <h1>Face Off!</h1>
 <p>Click on the extra face on the left.</p>
@@ -60,7 +63,7 @@
 <div id="leftSide"></div>
 <div id="rightSide"></div>
 
-<div id="buttonBody"> <!--To make this button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
+<div id="difficultyButton" class="buttonBody"> <!--To make this button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
     Choose your difficulty level:
     <div id="easy" class="divButton">
         Easy
@@ -73,14 +76,29 @@
     </div>
 </div>
 
-<audio id='sound3' src='/mp3s/sound3.mp3'>Your browser does not support the audio element.</audio>
-<audio id='sound2' src='/mp3s/sound2.mp3'>Your browser does not support the audio element.</audio>
-<audio id='sound0' src='/mp3s/sound0.mp3'>Your browser does not support the audio element.</audio>
-<audio id='sound1' src='/mp3s/sound1.mp3'>Your browser does not support the audio element.</audio>
+<div id="restartButton" class="buttonBody"> <!--To make this button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
+    Restart game?
+    <div id="yes" class="divButton">
+        Yes
+    </div>
+    <div id="no" class="divButton">
+        No
+    </div>
+</div>
+
+<button type="button" id="congratulationsButton" class="buttonBody" onclick="hideCongratulationsButton()">Congratulations! You completed <span id="congratulationsButtonText"></span> rounds!</button>
+
+<button type="button" id="gameOverButton" class="buttonBody" onclick="showRestartButton()">Game over! You completed <span id="gameOverButtonText"></span> rounds!</button>
+
+<button type="button" id="quitterButton" class="buttonBody" onclick="showRestartButton()">Quitter!</button>
+
+<audio id="sound3" src="/mp3s/sound3.mp3">Your browser does not support the audio element.</audio>
+<audio id="sound2" src="/mp3s/sound2.mp3">Your browser does not support the audio element.</audio>
+<audio id="sound0" src="/mp3s/sound0.mp3">Your browser does not support the audio element.</audio>
+<audio id="sound1" src="/mp3s/sound1.mp3">Your browser does not support the audio element.</audio>
 
 <script>
-    //add score board & timer
-    //turn all alert windows into buttons 
+    //add score board & timer, background music
     //style
 
     const faceArray = ['images/face0.png', 'images/face1.png', 'images/face2.png', 'images/face3.png'];
@@ -95,34 +113,48 @@
     const leftSideNodes = theLeftSide.childNodes; //needed to add game over to all faces on the left side
 
 
-    let button = document.querySelector('#buttonBody');
+    let difficultyButton = document.querySelector('#difficultyButton');
     let easy = document.querySelector('#easy');
     let medium = document.querySelector('#medium');
     let hard = document.querySelector('#hard');
-    
+    let congratulationsButton = document.querySelector('#congratulationsButton'); //V7
+    let gameOverButton = document.querySelector('#gameOverButton'); //V7
+    let restartButton = document.querySelector('#restartButton'); //V7
+    let yes = document.querySelector('#yes'); //V7 
+    let no = document.querySelector('#no'); //V7
+    let quitterButton = document.querySelector('#quitterButton'); //V7
+
     easy.addEventListener('click', setEasy);
     medium.addEventListener('click', setMedium);
     hard.addEventListener('click', setHard);
+    yes.addEventListener('click', restartYes); //V7
+    no.addEventListener('click', restartNo); //V7
 
-    function displayButton () {
-        button.hidden = false;
+
+    congratulationsButton.hidden = true; //V7 hide congrats button on page load
+    gameOverButton.hidden = true; //V7 hide gameOver button on page load
+    restartButton.hidden = true; //V7 hide restart button on page load
+    quitterButton.hidden = true; //V7 hide quitter button on page load
+    
+    function displayDifficultyButton () {
+        difficultyButton.hidden = false;
     }
 
     function setEasy() {
         facesIncrement = 2; 
-        button.hidden = true;
+        difficultyButton.hidden = true;
         generateFaces();
     }
 
     function setMedium() {
         facesIncrement = 5; 
-        button.hidden = true;
+        difficultyButton.hidden = true;
         generateFaces();
     }
 
     function setHard() {
         facesIncrement = 8; 
-        button.hidden = true;
+        difficultyButton.hidden = true;
         generateFaces();
     } 
 
@@ -150,7 +182,6 @@
 
         for (node of leftSideNodes) {//adds game over to all faces on the left side
             node.addEventListener('click', gameOver);
-            //node.addEventListener('mouseover', playSound); //V6 adds sounds to all faces, but it doesn't play the next sound until the current sound is finished. So if you mouse over a lot of faces quickly, only 1 sound will play
         }
 
         theLeftSide.lastChild.removeEventListener('click', gameOver); //removes gameOver from the last face on the left side
@@ -158,13 +189,8 @@
         theLeftSide.lastChild.addEventListener('click', grow) //adds listener to make face grow when clicked
     }
 
-    /*function playSound() { //V6 adds sounds to all faces, but it doesn't play the next sound until the current sound is finished. So if you mouse over a lot of faces quickly, only 1 sound will play
-        document.querySelector('#sound3').play();
-    }*/
-
-    function grow() { //V6 activates a CSS class to make the face grow
-        theLeftSide.lastChild.className = 'transform'; //both of these work, use this one because it's shorter
-        //theLeftSide.lastChild.setAttribute('class', 'transform'); 
+    function grow() { //activates a CSS class to make the face grow
+        theLeftSide.lastChild.className = 'transform';
     }
 
     function removeFaces() {
@@ -181,7 +207,7 @@
     }
 
     function nextLevel() {
-        const lastFace = faceNumberArray[faceNumberArray.length-1]; //V6 play sound when correct face is picked. Access last face that was generated and play its sound.
+        const lastFace = faceNumberArray[faceNumberArray.length-1]; //play sound when correct face is picked. Access last face that was generated and play its sound.
         if (lastFace === 0) { 
             document.querySelector('#sound0').play(); 
         }if (lastFace === 1) {
@@ -194,33 +220,90 @@
         
         attempts ++;
         setTimeout(congratulations, 1500);
+        
     }
 
-    function congratulations() {//V6 move this alert out of nextLevel() function so that it can be called in the nextLevel() function via a timeOut. This will let the face sound play a little bit before the congrats alert.
-        alert('Congratulations!\n\nYou completed ' + attempts + ' rounds!'); //need to fix case of 1 round (you completed 1 round instead of 1 rounds)
-        removeFaces();//V6 move this function out of nextLevel() function so that it would get stuck behind the alert window, user will have to click through alert to load next level.
-        generateFaces();//V6 move this function out of nextLevel() function so that
+    function congratulations() {
+        //alert('Congratulations!\n\nYou completed ' + attempts + ' rounds!'); //V7 - remove alert, replace with button. Need to fix case of 1 round (you completed 1 round instead of 1 rounds)
+        document.getElementById("congratulationsButtonText").innerHTML = attempts; //V7 - Adds the variable attempts to the text in the congrats button.
+        for (node of leftSideNodes) {//V7 removes gameOver from all incorrect faces on the left side and nextLevel & grow from the correct face. Keeps user from causing these functions to run if they happen to click on something other than Congrats button.
+            node.removeEventListener('click', gameOver);
+            node.removeEventListener('click', nextLevel);
+            node.removeEventListener('click', grow); 
+        }
+        congratulationsButton.hidden = false;//V7 set congrats button to visible, put function on click to hide it
+    }
+
+    function hideCongratulationsButton() { //V7 hide congrats button when clicked (button's onClick points here)
+        congratulationsButton.hidden = true;
+        removeFaces();//V7 move this function out of congratulations() and into hideCongratulationsButton() function so it will only run when the congrats button is clicked.
+        generateFaces();//V7 move this function out of congratulations() and into hideCongratulationsButton() function so it will only run when the congrats button is clicked.
     }
 
     function gameOver() {
         grow();//shows what the correct face would have been
-        alert('Game over!\n\nYou completed ' + attempts + ' rounds!');
+        //alert('Game over!\n\nYou completed ' + attempts + ' rounds!'); //V7 remove and make button which has a hidden attribute until needed.
         theLeftSide.lastChild.removeEventListener('click', nextLevel); //remove possibility of making the wrong choice then making the right choice and starting function nextLevel()
         for (node of leftSideNodes) {//removes game over to all faces on the left side
             node.removeEventListener('click', gameOver); //remove the possiblity of clicking on a wrong face once the game is over and re-runing the gameOver() function
         }
-        let restartChoice = confirm('Restart game?'); //make button have a hidden attribute until activated?
-        if (restartChoice === true) {
-            removeFaces();
-        numberOfFaces = 0;
-        attempts = 0;
-        displayButton();
-        }else{
-            alert('QUITTER!');
-        }
+        document.getElementById("gameOverButtonText").innerHTML = attempts; //V7 - Adds the variable attempts to the text in the gameOver button.
+        gameOverButton.hidden = false; //V7 - show gameOver button who's click will activate showRestartButton function.
     }
 
+    function showRestartButton() { //V7 - added function to hide gameOver button and show restart button. restartButton has onclicks to activate either restartYes or restartNo functions.
+        gameOverButton.hidden = true;
+        restartButton.hidden = false;
+        quitterButton.hidden = true;
+    }
+
+/* Code block below was used in the beginning of V7, but replaced at the end of V7 with the restartYes and restartNo functions.
+
+    function restart() { //V7 - removed restart code from gameOver function and created restart function so that restart code would run after the gameOverButton was pressed
+        //restartButton.hidden = false; // V7 - show restartButton when restart function is run.
+        let restartChoice = confirm('Restart game?'); //V7 need to make styled button instead of browser button.
+        if (restartChoice === true) {
+            removeFaces();
+            numberOfFaces = 0;
+            attempts = 0;
+            displayDifficultyButton();
+            congratulationsButton.hidden = true; //V7 - added to hide congrats button.Can't call hideCongratulationsButton() function here because it will generate faces which is not supposed to happen yet.
+            gameOverButton.hidden = true; //V7 - added to hide gameOver button.
+        }else{
+            alert('QUITTER!');//V7 need to make styled button instead of browser button.
+        }
+    }
+*/
+
+    function restartYes() { //V7 - added function.  Mostly the same as the V6 code which was turned into the restart function when I started to work on V7. At the end of V7, I replaced the restart function with restartYes and restartNo functions.
+        removeFaces();
+        numberOfFaces = 0;
+        attempts = 0;
+        displayDifficultyButton();
+        congratulationsButton.hidden = true; //V7 - added to hide congrats button.Can't call hideCongratulationsButton() function here because it will generate faces which is not supposed to happen yet.
+        gameOverButton.hidden = true; //V7 - added to hide gameOver button.
+        restartButton.hidden = true; //V7 - added to hide restart button.
+        quitterButton.hidden = true; //V7 - added to hide quitter button.
+    }
+
+    function restartNo() { //V7 - added function.  Mostly the same as the V6 code which was turned into the restart function when I started to work on V7. At the end of V7, I replaced the restart function with restartYes and restartNo functions.
+        quitterButton.hidden = false; //V7 - added to show quitter button.
+        restartButton.hidden = true; //V7 - added to hide restart button.
+    }
 
 </script>
+
+<!--
+<div id="congratulationsButton" class="buttonBody"> V7 To make the display of number of attempts work, this button had to come after the JS portion of code button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)
+    Congratulations!
+    You completed <script type="text/javascript">document.write(attempts)</script> rounds!
+    <div id="congratulationsContinueButton" class="divButton">
+        Continue
+    </div>
+</div>
+-->
+
+
+
 </body>
 </html>

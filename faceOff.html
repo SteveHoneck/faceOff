@@ -1,6 +1,7 @@
 <!--V2 - Added extra functions: Let user pick difficulty, track number of rounds, let user restart game-->
 <!--V3 - Make difficulty select a 3 button choice-->
-<!--V4 - make game over occur only when clicking on wrong face instead of anywhere but correct face-->
+<!--V4 - make game over only on click on wrong face instead of anywhere but correct face-->
+<!--V5 - Add random Face generation using an array-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +10,7 @@
     <style>
         img {
             position: absolute;
+            width: 75px;
         }
 
         div {
@@ -65,10 +67,11 @@
 </div>
 
 <script>
-    //replace smilies with one of liv's 4 faces
     //make noise on click on face
+    //add score board & timer
     //style
 
+    const faceArray = ['images/face1.png', 'images/face2.png', 'images/face3.png', 'images/face4.png'];
     const theLeftSide = document.querySelector('#leftSide');
     const theRightSide = document.querySelector('#rightSide');
     let attempts = 0;
@@ -113,7 +116,7 @@
         numberOfFaces += facesIncrement;
         for (i = 0; i < numberOfFaces; i++) {
             let face = document.createElement('img');
-            face.src = "images/smile.png"; //make an array of the 4 face locations and make face.src a random math to pick one of the 4 array elements?
+            face.src = faceArray[Math.floor(Math.random() * 4)]; //make an array of the 4 face locations and make face.src a random math to pick one of the 4 array elements?
 
             const randomTop = Math.floor(Math.random() * 400) + 1;
             const randomLeft = Math.floor(Math.random() * 400) + 1;

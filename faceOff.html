@@ -1,4 +1,5 @@
 <!--V2 - Added extra functions: Let user pick difficulty, track number of rounds, let user restart game-->
+<!--V3 - Make difficulty select a 3 button choice-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,14 +20,48 @@
             left: 500px;
             border-left: 1px solid;
         }
+
+        .divButton {
+            width: 75px;
+            height: 25px;
+            border: 1px solid black;
+            margin: 10px;
+            padding-top: 5px;
+            text-align: center;
+            position: relative;
+            left: 50px;
+        }
+
+        #buttonBody {
+            width: 200px;
+            height: 175px;
+            border: 1px solid black;
+            margin: 10px;
+            text-align: center;
+            left: 36%;
+            background: aquamarine;
+        }
     </style>
 </head>
-<body onload="setDifficulty()">
+<body>
 <h1>Face Off!</h1>
 <p>Click on the extra face on the left.</p>
 
 <div id="leftSide"></div>
 <div id="rightSide"></div>
+
+<div id="buttonBody"> <!--To make this button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
+    Choose your difficulty level:
+    <div id="easy" class="divButton">
+        Easy
+    </div>
+    <div id="medium" class="divButton">
+        Medium
+    </div>
+    <div id="hard" class="divButton">
+        Hard
+    </div>
+</div>
 
 <script>
     //replace smilies with one of liv's 4 faces
@@ -40,20 +75,42 @@
     let facesIncrement = 0;
     let numberOfFaces = 0;
 
-    function setDifficulty() {
-        let difficultyLevel = prompt('Difficulty level?'); //change into a button with 3 choices
+    let button = document.querySelector('#buttonBody');
+    let easy = document.querySelector('#easy');
+    let medium = document.querySelector('#medium');
+    let hard = document.querySelector('#hard');
     
-        if (difficultyLevel === 'easy') { //if dont change into a button with 3 choices, force user input to be lower case.  Come up with response if the user doesn't put in a level
-            facesIncrement = 2;
-        } else if (difficultyLevel === 'medium') {
-            facesIncrement = 5;
-        } else {
-            facesIncrement = 8;
-        }
+    easy.addEventListener('click', setEasy);
+    medium.addEventListener('click', setMedium);
+    hard.addEventListener('click', setHard);
+
+    function displayButton () {
+        button.hidden = false;
+    }
+
+    function setEasy(event) {
+        event.stopPropagation(); //can get rid of these after getting rid of making a click anywhere end the game
+        facesIncrement = 2; 
+        console.log('easy');
+        button.hidden = true;
         generateFaces();
     }
-   
-    
+
+    function setMedium(event) {
+        event.stopPropagation();
+        facesIncrement = 5; 
+        console.log('medium');
+        button.hidden = true;
+        generateFaces();
+    }
+
+    function setHard(event) {
+        event.stopPropagation();
+        facesIncrement = 8; 
+        console.log('hard');
+        button.hidden = true;
+        generateFaces();
+    } 
 
     function generateFaces() {
         numberOfFaces += facesIncrement;
@@ -107,7 +164,7 @@
             removeFaces();
         numberOfFaces = 0;
         attempts = 0;
-        setDifficulty();
+        displayButton();
         }else{
             alert('QUITTER!');
         }

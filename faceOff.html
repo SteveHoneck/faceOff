@@ -1,5 +1,6 @@
 <!--V2 - Added extra functions: Let user pick difficulty, track number of rounds, let user restart game-->
 <!--V3 - Make difficulty select a 3 button choice-->
+<!--V4 - make game over occur only when clicking on wrong face instead of anywhere but correct face-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,7 +67,6 @@
 <script>
     //replace smilies with one of liv's 4 faces
     //make noise on click on face
-    //make game over only on click on wrong face instead of anywhere but correct face
     //style
 
     const theLeftSide = document.querySelector('#leftSide');
@@ -88,24 +88,21 @@
         button.hidden = false;
     }
 
-    function setEasy(event) {
-        event.stopPropagation(); //can get rid of these after getting rid of making a click anywhere end the game
+    function setEasy() {
         facesIncrement = 2; 
         console.log('easy');
         button.hidden = true;
         generateFaces();
     }
 
-    function setMedium(event) {
-        event.stopPropagation();
+    function setMedium() {
         facesIncrement = 5; 
         console.log('medium');
         button.hidden = true;
         generateFaces();
     }
 
-    function setHard(event) {
-        event.stopPropagation();
+    function setHard() {
         facesIncrement = 8; 
         console.log('hard');
         button.hidden = true;
@@ -130,8 +127,14 @@
         leftSideImages.removeChild(leftSideImages.lastChild);
         theRightSide.appendChild(leftSideImages);
 
-        theLeftSide.lastChild.addEventListener('click', nextLevel);
-        document.body.addEventListener('click', gameOver);
+        const leftSideNodes = theLeftSide.childNodes; //adds game over to all faces on the left side
+        for (node of leftSideNodes) {
+            node.addEventListener('click', gameOver);
+        }
+
+        theLeftSide.lastChild.removeEventListener('click', gameOver); //removes gameOver from the last face on the left side
+        theLeftSide.lastChild.addEventListener('click', nextLevel); //adds nextLevel to the last face on the left side
+       
 
     }
 
@@ -145,8 +148,7 @@
         }        
     }
 
-    function nextLevel(event) {
-        event.stopPropagation();
+    function nextLevel() {
         removeFaces();
         
         console.log(numberOfFaces);

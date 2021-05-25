@@ -4,6 +4,7 @@
 <!--V5 - Add random Face generation using an array-->
 <!--V6 - make noise and face grow when click on the correct face, make correct face grow when click on the wrong face-->
 <!--V7 - Turn all alerts into buttons instead of browser alerts-->
+<!--V8 - Add countdown timer, add scoreboard, background music-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,8 +99,6 @@
 <audio id="sound1" src="/mp3s/sound1.mp3">Your browser does not support the audio element.</audio>
 
 <script>
-    //add score board & timer, background music
-    //style
 
     const faceArray = ['images/face0.png', 'images/face1.png', 'images/face2.png', 'images/face3.png'];
     const theLeftSide = document.querySelector('#leftSide');
@@ -136,6 +135,12 @@
     restartButton.hidden = true; //V7 hide restart button on page load
     quitterButton.hidden = true; //V7 hide quitter button on page load
     
+    function timer() { //V8 - This timer needs to run as soon as difficulty selection is made, add call to timer() to that function?
+        let time = facesIncrement * 2000;
+        let gameOverTimer = setTimeout(gameOver, time);
+        clearTimeout(gameOverTimer); // When nextLevel happens this needs to fire & also function timer() needs to restart, probably move into & add call to timer() in nextLevel function
+    }
+
     function displayDifficultyButton () {
         difficultyButton.hidden = false;
     }
@@ -224,7 +229,6 @@
     }
 
     function congratulations() {
-        //alert('Congratulations!\n\nYou completed ' + attempts + ' rounds!'); //V7 - remove alert, replace with button. Need to fix case of 1 round (you completed 1 round instead of 1 rounds)
         document.getElementById("congratulationsButtonText").innerHTML = attempts; //V7 - Adds the variable attempts to the text in the congrats button.
         for (node of leftSideNodes) {//V7 removes gameOver from all incorrect faces on the left side and nextLevel & grow from the correct face. Keeps user from causing these functions to run if they happen to click on something other than Congrats button.
             node.removeEventListener('click', gameOver);
@@ -242,7 +246,6 @@
 
     function gameOver() {
         grow();//shows what the correct face would have been
-        //alert('Game over!\n\nYou completed ' + attempts + ' rounds!'); //V7 remove and make button which has a hidden attribute until needed.
         theLeftSide.lastChild.removeEventListener('click', nextLevel); //remove possibility of making the wrong choice then making the right choice and starting function nextLevel()
         for (node of leftSideNodes) {//removes game over to all faces on the left side
             node.removeEventListener('click', gameOver); //remove the possiblity of clicking on a wrong face once the game is over and re-runing the gameOver() function
@@ -256,24 +259,6 @@
         restartButton.hidden = false;
         quitterButton.hidden = true;
     }
-
-/* Code block below was used in the beginning of V7, but replaced at the end of V7 with the restartYes and restartNo functions.
-
-    function restart() { //V7 - removed restart code from gameOver function and created restart function so that restart code would run after the gameOverButton was pressed
-        //restartButton.hidden = false; // V7 - show restartButton when restart function is run.
-        let restartChoice = confirm('Restart game?'); //V7 need to make styled button instead of browser button.
-        if (restartChoice === true) {
-            removeFaces();
-            numberOfFaces = 0;
-            attempts = 0;
-            displayDifficultyButton();
-            congratulationsButton.hidden = true; //V7 - added to hide congrats button.Can't call hideCongratulationsButton() function here because it will generate faces which is not supposed to happen yet.
-            gameOverButton.hidden = true; //V7 - added to hide gameOver button.
-        }else{
-            alert('QUITTER!');//V7 need to make styled button instead of browser button.
-        }
-    }
-*/
 
     function restartYes() { //V7 - added function.  Mostly the same as the V6 code which was turned into the restart function when I started to work on V7. At the end of V7, I replaced the restart function with restartYes and restartNo functions.
         removeFaces();
@@ -292,18 +277,6 @@
     }
 
 </script>
-
-<!--
-<div id="congratulationsButton" class="buttonBody"> V7 To make the display of number of attempts work, this button had to come after the JS portion of code button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)
-    Congratulations!
-    You completed <script type="text/javascript">document.write(attempts)</script> rounds!
-    <div id="congratulationsContinueButton" class="divButton">
-        Continue
-    </div>
-</div>
--->
-
-
 
 </body>
 </html>

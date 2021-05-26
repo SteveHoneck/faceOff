@@ -11,5 +11,5 @@ V4: Make game over only on click on wrong face instead of anywhere but correct f
 V5: Add random Face generation using an array\
 V6: Make noise and face grow when click on the correct face, make correct face grow when click on the wrong face\
 V7: Turn all alerts into buttons instead of browser alerts\
-V8 (pending) - Add countdown timer, add scoreboard, background music\
-V9 (pending) - Make it pretty with CSS.
+V8: Add countdown timer\
+Pending: Add scoreboard, add background music, make it pretty with CSS.

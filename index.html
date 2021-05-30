@@ -61,255 +61,261 @@
             border: 2px solid black;
         }
 
+        .dashBoard { /*Controls dynamic game info*/
+            display: inline-block; /*Set to "inline-block" so that they all show up in a horizontal row (inline) and can have sizing applied to them (block)*/
+            width: 300px;
+        }
+
     </style>
 </head>
 
 <body>
-<audio id="backgroundMusic" src="mp3s/Boccherini_Concerto_478-1.mp3" controls loop>Your browser does not support HTML5 audio.</audio> <!--V9, added background music-->
-<h1>Face Off!</h1>
-<p>There is an extra face hiding on the left side.</p>
-<p>Click it to move on to the next level!</p>
+    <h1>Face Off!</h1>
+    <p>There is an extra face hiding on the left side.</p>
+    <p>Click it to move on to the next level!</p>
 
-<div id="timer"> <!--V8-->
-    Time Left: <span id="currentTime"></span>
-</div>
-
-<div id="scoreBoard"> <!--V9-->
-    Current Level: <span id="currentLevel"></span>
-</div>
-
-<div id="leftSide"></div>
-<div id="rightSide"></div>
-
-<div id="difficultyButton" class="buttonBody"> <!--To make this button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
-    Choose your difficulty level:
-    <div id="easy" class="divButton">
-        Easy
+    <div id="timer" class="dashBoard"> <!--V8-->
+        Time Left: <span id="currentTime"></span>
     </div>
-    <div id="medium" class="divButton">
-        Medium
+
+    <audio id="backgroundMusic" class="dashBoard" src="mp3s/Boccherini_Concerto_478-1.mp3" controls loop>Your browser does not support HTML5 audio.</audio> <!--V9, added background music-->
+
+    <div id="scoreBoard" class="dashBoard"> <!--V9-->
+        Current Level: <span id="currentLevel"></span>
     </div>
-    <div id="hard" class="divButton">
-        Hard
+
+    <div id="leftSide"></div>
+    <div id="rightSide"></div>
+
+    <div id="difficultyButton" class="buttonBody"> <!--To make this button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
+        Choose your difficulty level:
+        <div id="easy" class="divButton">
+            Easy
+        </div>
+        <div id="medium" class="divButton">
+            Medium
+        </div>
+        <div id="hard" class="divButton">
+            Hard
+        </div>
     </div>
-</div>
 
-<div id="restartButton" class="buttonBody"> <!--To make this button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
-    Restart game?
-    <div id="yes" class="divButton">
-        Yes
+    <div id="restartButton" class="buttonBody"> <!--To make this button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
+        Restart game?
+        <div id="yes" class="divButton">
+            Yes
+        </div>
+        <div id="no" class="divButton">
+            No
+        </div>
     </div>
-    <div id="no" class="divButton">
-        No
-    </div>
-</div>
 
-<button type="button" id="congratulationsButton" class="buttonBody" onclick="hideCongratulationsButton()">Congratulations! You completed <span id="congratulationsButtonText"></span> levels!</button>
+    <button type="button" id="congratulationsButton" class="buttonBody" onclick="hideCongratulationsButton()">Congratulations! You completed <span id="congratulationsButtonText"></span> levels!</button>
 
-<button type="button" id="gameOverButton" class="buttonBody" onclick="showRestartButton()">Game over! You completed <span id="gameOverButtonText"></span> levels!</button>
+    <button type="button" id="gameOverButton" class="buttonBody" onclick="showRestartButton()">Game over! You completed <span id="gameOverButtonText"></span> levels!</button>
 
-<button type="button" id="quitterButton" class="buttonBody" onclick="showRestartButton()">Quitter!</button>
+    <button type="button" id="quitterButton" class="buttonBody" onclick="showRestartButton()">Quitter!</button>
 
-<audio id="sound3" src="/mp3s/sound3.mp3">Your browser does not support the audio element.</audio>
-<audio id="sound2" src="/mp3s/sound2.mp3">Your browser does not support the audio element.</audio>
-<audio id="sound0" src="/mp3s/sound0.mp3">Your browser does not support the audio element.</audio>
-<audio id="sound1" src="/mp3s/sound1.mp3">Your browser does not support the audio element.</audio>
+    <audio id="sound3" src="/mp3s/sound3.mp3">Your browser does not support the audio element.</audio>
+    <audio id="sound2" src="/mp3s/sound2.mp3">Your browser does not support the audio element.</audio>
+    <audio id="sound0" src="/mp3s/sound0.mp3">Your browser does not support the audio element.</audio>
+    <audio id="sound1" src="/mp3s/sound1.mp3">Your browser does not support the audio element.</audio>
 
-<script>
+    <script>
 
-    const faceArray = ['images/face0.png', 'images/face1.png', 'images/face2.png', 'images/face3.png'];
-    const theLeftSide = document.querySelector('#leftSide');
-    const theRightSide = document.querySelector('#rightSide');
-    
-    
-    let attempts = 0;
-    let facesIncrement = 0;
-    let numberOfFaces = 0;
-    let faceNumberArray = []; //array to store the random face numbers that are generated, last value will be used later to pick sound
-    const leftSideNodes = theLeftSide.childNodes; //needed to add game over to all faces on the left side
+        const faceArray = ['images/face0.png', 'images/face1.png', 'images/face2.png', 'images/face3.png'];
+        const theLeftSide = document.querySelector('#leftSide');
+        const theRightSide = document.querySelector('#rightSide');
+        
+        
+        let attempts = 0;
+        let facesIncrement = 0;
+        let numberOfFaces = 0;
+        let faceNumberArray = []; //array to store the random face numbers that are generated, last value will be used later to pick sound
+        const leftSideNodes = theLeftSide.childNodes; //needed to add game over to all faces on the left side
 
 
-    let difficultyButton = document.querySelector('#difficultyButton');
-    let easy = document.querySelector('#easy');
-    let medium = document.querySelector('#medium');
-    let hard = document.querySelector('#hard');
-    let congratulationsButton = document.querySelector('#congratulationsButton'); //V7
-    let gameOverButton = document.querySelector('#gameOverButton'); //V7
-    let restartButton = document.querySelector('#restartButton'); //V7
-    let yes = document.querySelector('#yes'); //V7 
-    let no = document.querySelector('#no'); //V7
-    let quitterButton = document.querySelector('#quitterButton'); //V7
-    let countdownTimer //V8, must be declared here so that it is available globally so ""clearInterval" can use it elsewhere in the code
-    let backgroundMusic = document.querySelector('#backgroundMusic');//v9, make the embedded background music available to JS code
+        let difficultyButton = document.querySelector('#difficultyButton');
+        let easy = document.querySelector('#easy');
+        let medium = document.querySelector('#medium');
+        let hard = document.querySelector('#hard');
+        let congratulationsButton = document.querySelector('#congratulationsButton'); //V7
+        let gameOverButton = document.querySelector('#gameOverButton'); //V7
+        let restartButton = document.querySelector('#restartButton'); //V7
+        let yes = document.querySelector('#yes'); //V7 
+        let no = document.querySelector('#no'); //V7
+        let quitterButton = document.querySelector('#quitterButton'); //V7
+        let countdownTimer //V8, must be declared here so that it is available globally so ""clearInterval" can use it elsewhere in the code
+        let backgroundMusic = document.querySelector('#backgroundMusic');//v9, make the embedded background music available to JS code
 
 
-    easy.addEventListener('click', setEasy);
-    medium.addEventListener('click', setMedium);
-    hard.addEventListener('click', setHard);
-    yes.addEventListener('click', restartYes); //V7
-    no.addEventListener('click', restartNo); //V7
+        easy.addEventListener('click', setEasy);
+        medium.addEventListener('click', setMedium);
+        hard.addEventListener('click', setHard);
+        yes.addEventListener('click', restartYes); //V7
+        no.addEventListener('click', restartNo); //V7
 
 
-    congratulationsButton.hidden = true; //V7 hide congrats button on page load
-    gameOverButton.hidden = true; //V7 hide gameOver button on page load
-    restartButton.hidden = true; //V7 hide restart button on page load
-    quitterButton.hidden = true; //V7 hide quitter button on page load
-    
-    function timer() { //V8, function to control countdown timer
-        let time = numberOfFaces //timer will be set to correspond with the number of faces (hence, the level) user is on. Must be inside the "timer" function because if it loads with all the other variable declarations, the "numberOfFaces" will not have been set yet.
-        document.getElementById("currentTime").innerHTML = time; //Initial setting of the timer, over-ridden later within the "setInterval" function. Must be inside the "timer" function, if not, it causes all buttons to be visible when the webpage first loads.
+        congratulationsButton.hidden = true; //V7 hide congrats button on page load
+        gameOverButton.hidden = true; //V7 hide gameOver button on page load
+        restartButton.hidden = true; //V7 hide restart button on page load
+        quitterButton.hidden = true; //V7 hide quitter button on page load
+        
+        function timer() { //V8, function to control countdown timer
+            let time = numberOfFaces //timer will be set to correspond with the number of faces (hence, the level) user is on. Must be inside the "timer" function because if it loads with all the other variable declarations, the "numberOfFaces" will not have been set yet.
+            document.getElementById("currentTime").innerHTML = time; //Initial setting of the timer, over-ridden later within the "setInterval" function. Must be inside the "timer" function, if not, it causes all buttons to be visible when the webpage first loads.
 
-        countdownTimer = setInterval(function() { //use "setInterval" to run "function" every second ("1000" as second argument to "setInterval" sets it to run every 1 second). Can't declare "countdownTimer" inside this function because "countdownTimer" needs to be available globally so that "clearInterval" can be called in other areas of the code.
-            time--; //subtract "1" from the "time" variable
-            if (time > -1) { //"if" block added to allow timer to display the "0th" second, otherwise if the "if" condition was "time = 0" the "gamOver" function would display sooner than I would like it to
-                document.getElementById("currentTime").innerHTML =  time; //display the new "time" variable (which has been decremented by 1)
-            } else {
-                gameOver(); //run the "gameOver" function
+            countdownTimer = setInterval(function() { //use "setInterval" to run "function" every second ("1000" as second argument to "setInterval" sets it to run every 1 second). Can't declare "countdownTimer" inside this function because "countdownTimer" needs to be available globally so that "clearInterval" can be called in other areas of the code.
+                time--; //subtract "1" from the "time" variable
+                if (time > -1) { //"if" block added to allow timer to display the "0th" second, otherwise if the "if" condition was "time = 0" the "gamOver" function would display sooner than I would like it to
+                    document.getElementById("currentTime").innerHTML =  time; //display the new "time" variable (which has been decremented by 1)
+                } else {
+                    gameOver(); //run the "gameOver" function
+                }
+            }, 1000);
+        }
+
+        function displayDifficultyButton () {
+            difficultyButton.hidden = false;
+        }
+
+        function setEasy() {
+            facesIncrement = 2; 
+            difficultyButton.hidden = true;
+            generateFaces();
+        }
+
+        function setMedium() {
+            facesIncrement = 5; 
+            difficultyButton.hidden = true;
+            generateFaces();
+        }
+
+        function setHard() {
+            facesIncrement = 8; 
+            difficultyButton.hidden = true;
+            generateFaces();
+        } 
+
+        function generateFaces() {
+            numberOfFaces += facesIncrement;
+            for (i = 0; i < numberOfFaces; i++) {
+                let face = document.createElement('img');
+                let faceNumber = Math.floor(Math.random() * 4); //random number used to pick a face from the array
+                
+                face.src = faceArray[faceNumber]; //pick random face picture for the newly created face img element
+                faceNumberArray.push(faceNumber); //add the random face number to the faceNumberArray, last value will be used later to pick sound
+
+                const randomTop = Math.floor(Math.random() * 400) + 1;
+                const randomLeft = Math.floor(Math.random() * 400) + 1;
+                face.style.top = randomTop + 'px';
+                face.style.left = randomLeft + 'px';
+                theLeftSide.appendChild(face);
+
+                console.log(faceNumberArray);
             }
-        }, 1000);
-    }
 
-    function displayDifficultyButton () {
-        difficultyButton.hidden = false;
-    }
+            const leftSideImages = theLeftSide.cloneNode(true);
+            leftSideImages.removeChild(leftSideImages.lastChild);
+            theRightSide.appendChild(leftSideImages);
 
-    function setEasy() {
-        facesIncrement = 2; 
-        difficultyButton.hidden = true;
-        generateFaces();
-    }
+            for (node of leftSideNodes) {//adds game over to all faces on the left side
+                node.addEventListener('click', gameOver);
+            }
 
-    function setMedium() {
-        facesIncrement = 5; 
-        difficultyButton.hidden = true;
-        generateFaces();
-    }
+            theLeftSide.lastChild.removeEventListener('click', gameOver); //removes gameOver from the last face on the left side
+            theLeftSide.lastChild.addEventListener('click', nextLevel); //adds nextLevel to the last face on the left side   
+            theLeftSide.lastChild.addEventListener('click', grow) //adds listener to make face grow when clicked
 
-    function setHard() {
-        facesIncrement = 8; 
-        difficultyButton.hidden = true;
-        generateFaces();
-    } 
+            timer(); //V8, start the countdown timer
+            document.getElementById("currentLevel").innerHTML = attempts + 1; //V9, set the current level in the "scoreBoard"
+            backgroundMusic.play();//V9, start playing the background music
+        }
 
-    function generateFaces() {
-        numberOfFaces += facesIncrement;
-        for (i = 0; i < numberOfFaces; i++) {
-            let face = document.createElement('img');
-            let faceNumber = Math.floor(Math.random() * 4); //random number used to pick a face from the array
+        function grow() { //activates a CSS class to make the face grow
+            clearInterval(countdownTimer); //Stops the timer. Must be added here due to timing issues. If added elsewhere ("nextLevel", "congratulations", "gameOver" functions), stopping the timer gets stuck behind the time required for the face to grow. So if user activates one of those functions close to the end of the timer (within the CSS transition time for "transform"), the function "gameOver" will run before the timer is stopped.
+            theLeftSide.lastChild.className = 'transform';
+        }
+
+        function removeFaces() {
+            while(theLeftSide.firstChild) {
+                theLeftSide.removeChild(theLeftSide.firstChild);
+            }
+
+            while(theRightSide.firstChild) {
+                theRightSide.removeChild(theRightSide.firstChild);
+            }
             
-            face.src = faceArray[faceNumber]; //pick random face picture for the newly created face img element
-            faceNumberArray.push(faceNumber); //add the random face number to the faceNumberArray, last value will be used later to pick sound
-
-            const randomTop = Math.floor(Math.random() * 400) + 1;
-            const randomLeft = Math.floor(Math.random() * 400) + 1;
-            face.style.top = randomTop + 'px';
-            face.style.left = randomLeft + 'px';
-            theLeftSide.appendChild(face);
-
-            console.log(faceNumberArray);
+            faceNumberArray = [] //remove everything in the faceNumberArray, otherwise the array would be the array from the previous round plus all new faces, could get very long. Works fine, but having a big array is messy.
+            
         }
 
-        const leftSideImages = theLeftSide.cloneNode(true);
-        leftSideImages.removeChild(leftSideImages.lastChild);
-        theRightSide.appendChild(leftSideImages);
-
-        for (node of leftSideNodes) {//adds game over to all faces on the left side
-            node.addEventListener('click', gameOver);
+        function nextLevel() {
+            const lastFace = faceNumberArray[faceNumberArray.length-1]; //play sound when correct face is picked. Access last face that was generated and play its sound.
+            if (lastFace === 0) { 
+                document.querySelector('#sound0').play(); 
+            }if (lastFace === 1) {
+                document.querySelector('#sound1').play(); 
+            }if (lastFace === 2) {
+                document.querySelector('#sound2').play(); 
+            }if (lastFace === 3) {
+                document.querySelector('#sound3').play();
+            }
+            
+            attempts ++;
+            setTimeout(congratulations, 1500);
         }
 
-        theLeftSide.lastChild.removeEventListener('click', gameOver); //removes gameOver from the last face on the left side
-        theLeftSide.lastChild.addEventListener('click', nextLevel); //adds nextLevel to the last face on the left side   
-        theLeftSide.lastChild.addEventListener('click', grow) //adds listener to make face grow when clicked
-
-        timer(); //V8, start the countdown timer
-        document.getElementById("currentLevel").innerHTML = attempts + 1; //V9, set the current level in the "scoreBoard"
-        backgroundMusic.play();//V9, start playing the background music
-    }
-
-    function grow() { //activates a CSS class to make the face grow
-        clearInterval(countdownTimer); //Stops the timer. Must be added here due to timing issues. If added elsewhere ("nextLevel", "congratulations", "gameOver" functions), stopping the timer gets stuck behind the time required for the face to grow. So if user activates one of those functions close to the end of the timer (within the CSS transition time for "transform"), the function "gameOver" will run before the timer is stopped.
-        theLeftSide.lastChild.className = 'transform';
-    }
-
-    function removeFaces() {
-        while(theLeftSide.firstChild) {
-            theLeftSide.removeChild(theLeftSide.firstChild);
+        function congratulations() {
+            document.getElementById("congratulationsButtonText").innerHTML = attempts; //V7 - Adds the variable attempts to the text in the congrats button.
+            for (node of leftSideNodes) {//V7 removes gameOver from all incorrect faces on the left side and nextLevel & grow from the correct face. Keeps user from causing these functions to run if they happen to click on something other than Congrats button.
+                node.removeEventListener('click', gameOver);
+                node.removeEventListener('click', nextLevel);
+                node.removeEventListener('click', grow); 
+            }
+            congratulationsButton.hidden = false;//V7 set congrats button to visible, put function on click to hide it
         }
 
-        while(theRightSide.firstChild) {
-            theRightSide.removeChild(theRightSide.firstChild);
+        function hideCongratulationsButton() { //V7 hide congrats button when clicked (button's onClick points here)
+            congratulationsButton.hidden = true;
+            removeFaces();//V7 move this function out of congratulations() and into hideCongratulationsButton() function so it will only run when the congrats button is clicked.
+            generateFaces();//V7 move this function out of congratulations() and into hideCongratulationsButton() function so it will only run when the congrats button is clicked.
         }
-        
-        faceNumberArray = [] //remove everything in the faceNumberArray, otherwise the array would be the array from the previous round plus all new faces, could get very long. Works fine, but having a big array is messy.
-        
-    }
 
-    function nextLevel() {
-        const lastFace = faceNumberArray[faceNumberArray.length-1]; //play sound when correct face is picked. Access last face that was generated and play its sound.
-        if (lastFace === 0) { 
-            document.querySelector('#sound0').play(); 
-        }if (lastFace === 1) {
-            document.querySelector('#sound1').play(); 
-        }if (lastFace === 2) {
-            document.querySelector('#sound2').play(); 
-        }if (lastFace === 3) {
-            document.querySelector('#sound3').play();
+        function gameOver() {
+            backgroundMusic.pause(); //V9, pause background music if user hits "gameOver" function
+            grow();//shows what the correct face would have been
+            theLeftSide.lastChild.removeEventListener('click', nextLevel); //remove possibility of making the wrong choice then making the right choice and starting function nextLevel()
+            for (node of leftSideNodes) {//removes game over to all faces on the left side
+                node.removeEventListener('click', gameOver); //remove the possiblity of clicking on a wrong face once the game is over and re-runing the gameOver() function
+            }
+            document.getElementById("gameOverButtonText").innerHTML = attempts; //V7 - Adds the variable attempts to the text in the gameOver button.
+            gameOverButton.hidden = false; //V7 - show gameOver button who's click will activate showRestartButton function.
         }
-        
-        attempts ++;
-        setTimeout(congratulations, 1500);
-    }
 
-    function congratulations() {
-        document.getElementById("congratulationsButtonText").innerHTML = attempts; //V7 - Adds the variable attempts to the text in the congrats button.
-        for (node of leftSideNodes) {//V7 removes gameOver from all incorrect faces on the left side and nextLevel & grow from the correct face. Keeps user from causing these functions to run if they happen to click on something other than Congrats button.
-            node.removeEventListener('click', gameOver);
-            node.removeEventListener('click', nextLevel);
-            node.removeEventListener('click', grow); 
+        function showRestartButton() { //V7 - added function to hide gameOver button and show restart button. restartButton has onclicks to activate either restartYes or restartNo functions.
+            gameOverButton.hidden = true;
+            restartButton.hidden = false;
+            quitterButton.hidden = true;
         }
-        congratulationsButton.hidden = false;//V7 set congrats button to visible, put function on click to hide it
-    }
 
-    function hideCongratulationsButton() { //V7 hide congrats button when clicked (button's onClick points here)
-        congratulationsButton.hidden = true;
-        removeFaces();//V7 move this function out of congratulations() and into hideCongratulationsButton() function so it will only run when the congrats button is clicked.
-        generateFaces();//V7 move this function out of congratulations() and into hideCongratulationsButton() function so it will only run when the congrats button is clicked.
-    }
-
-    function gameOver() {
-        backgroundMusic.pause(); //V9, pause background music if user hits "gameOver" function
-        grow();//shows what the correct face would have been
-        theLeftSide.lastChild.removeEventListener('click', nextLevel); //remove possibility of making the wrong choice then making the right choice and starting function nextLevel()
-        for (node of leftSideNodes) {//removes game over to all faces on the left side
-            node.removeEventListener('click', gameOver); //remove the possiblity of clicking on a wrong face once the game is over and re-runing the gameOver() function
+        function restartYes() { //V7 - added function.  Mostly the same as the V6 code which was turned into the restart function when I started to work on V7. At the end of V7, I replaced the restart function with restartYes and restartNo functions.
+            removeFaces();
+            numberOfFaces = 0;
+            attempts = 0;
+            displayDifficultyButton();
+            congratulationsButton.hidden = true; //V7 - added to hide congrats button.Can't call hideCongratulationsButton() function here because it will generate faces which is not supposed to happen yet.
+            gameOverButton.hidden = true; //V7 - added to hide gameOver button.
+            restartButton.hidden = true; //V7 - added to hide restart button.
+            quitterButton.hidden = true; //V7 - added to hide quitter button.
         }
-        document.getElementById("gameOverButtonText").innerHTML = attempts; //V7 - Adds the variable attempts to the text in the gameOver button.
-        gameOverButton.hidden = false; //V7 - show gameOver button who's click will activate showRestartButton function.
-    }
 
-    function showRestartButton() { //V7 - added function to hide gameOver button and show restart button. restartButton has onclicks to activate either restartYes or restartNo functions.
-        gameOverButton.hidden = true;
-        restartButton.hidden = false;
-        quitterButton.hidden = true;
-    }
+        function restartNo() { //V7 - added function.  Mostly the same as the V6 code which was turned into the restart function when I started to work on V7. At the end of V7, I replaced the restart function with restartYes and restartNo functions.
+            quitterButton.hidden = false; //V7 - added to show quitter button.
+            restartButton.hidden = true; //V7 - added to hide restart button.
+        }
 
-    function restartYes() { //V7 - added function.  Mostly the same as the V6 code which was turned into the restart function when I started to work on V7. At the end of V7, I replaced the restart function with restartYes and restartNo functions.
-        removeFaces();
-        numberOfFaces = 0;
-        attempts = 0;
-        displayDifficultyButton();
-        congratulationsButton.hidden = true; //V7 - added to hide congrats button.Can't call hideCongratulationsButton() function here because it will generate faces which is not supposed to happen yet.
-        gameOverButton.hidden = true; //V7 - added to hide gameOver button.
-        restartButton.hidden = true; //V7 - added to hide restart button.
-        quitterButton.hidden = true; //V7 - added to hide quitter button.
-    }
-
-    function restartNo() { //V7 - added function.  Mostly the same as the V6 code which was turned into the restart function when I started to work on V7. At the end of V7, I replaced the restart function with restartYes and restartNo functions.
-        quitterButton.hidden = false; //V7 - added to show quitter button.
-        restartButton.hidden = true; //V7 - added to hide restart button.
-    }
-
-</script>
+    </script>
 
 <!--V2 - Added extra functions: Let user pick difficulty, track number of levels, let user restart game-->
 <!--V3 - Make difficulty select a 3 button choice-->

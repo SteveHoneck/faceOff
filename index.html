@@ -3,22 +3,41 @@
 <head>
     <meta charset="utf-8">
     <title>Face Off!</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Port+Lligat+Sans&display=swap" rel="stylesheet"> 
     <style>
         body {
             width: 1024px; /*Width will be the size of "wrapper" <div (width + padding + borders). Adding this keeps other elements from moving around when resizing browser window because <body> does not resize (shrink)*/
-            background-color: aqua;
             margin: auto; /*Keeps everything centered */
+            font-family: 'Port Lligat Sans', sans-serif;
+        }
+        
+        h1 {
+            font-size: 62px;
+            text-align: center;
+            margin: 10px;
+        }
+
+        p {
+            font-size: 24px;
+            text-align: center;
+            margin: 10px;
+            color: #026670;
+        }
+
+        div {
+            color: #026670;
         }
 
         .wrapper {
             position: relative; /*Set ".wrapper" position to "relative" so that the "absolute" positioned buttons can be positioned relative to the ".wrapper" <div> element*/
             border: 1px solid red;
             height: 690px; /*Calculated to go beyond "leftSide" and "rightSide" by Xpx: turn "height" off to see what auto-generated height is, then add height "left/rightSide" height + "left/rightSide" top & bottom borders*/
-            width: 1002px; /*Width is the width of "leftSide" + "rightSide" + thier borders*/
+            width: 1014px; /*Width is the width of "leftSide" + "rightSide" + their borders + 10 for space between the two sides (this does not include the "padding" of the ".wrapper" <div>*/
             padding-left: 10px;
             padding-right: 10px;
             padding-bottom: 10px;
-            background-color: blanchedalmond;
+            background-color: #cfccc6;
             margin-top: 10px; /*Drop down from top of browser window */
         }
 
@@ -32,34 +51,36 @@
             width: 500px;
             height: 500px;
             border: 1px solid black; /*!!!!!!!Need to remove (leave only background color) and recalculate other spacing values because when DOM nodes are copied, the border is copied as well and looks too thick*/
-            background-color: cornflowerblue;
+            background-color: #EDEAE5;
         }
 
         #rightSide {
-            left: 510px; /*"rightSide" must be offset by 500+10 to account for the "wrapper" <div> padding of 10*/
+            left: 520px; /*"rightSide" must be offset by 500+10 to account for the "wrapper" <div> padding of 10 + 10 for space between the two sides*/
             border-left: 1px solid;
         }
 
-        .divButton {
+        .buttonSelection {
+            position: relative; /*allow positioning to be "realitive" to ".buttonBody" <div>*/
             width: 75px;
             height: 25px;
+            margin: 10px auto; /*10px top and bottom margin, left and right set to "auto" so the button selections are always centered horizontally (if all sides are auto, top and bottom margins are 0)*/
+            padding: 0.25em;
+            line-height: 25px; /*Trick for vertically centering the text, set "line-height" equal to the height of the element*/
             border: 1px solid black;
-            margin: 10px;
-            padding-top: 5px;
-            text-align: center;
-            position: relative;
-            left: 50px;
+            border-radius: 16px;
+            background: #FEF9C7;
         }
 
         .buttonBody {
-            width: 200px;
-            height: 175px;
-            border: 1px solid black;
-            margin: 10px;
-            text-align: center;
-            left: 36%;
-            background: aquamarine;
             position: absolute;/*Set position to "absolute" so that the buttons are removed from the document flow/spacing and can appear on top of everything*/
+            top: 50%; /*Move top of <div> down by 50% of containing block*/
+            left: 50%;/*Move left side of <div> to the right by 50% of containing block*/
+            transform: translate(-50%, -50%); /*Move <div> to the left & down by half of its width and height*/
+            padding: 1em 0.75em; /*Setting padding only (as opposed to setting width and height) will make the <div> body resize to fit its contents but have a consistent padding around the contents*/
+            text-align: center;
+            border: 1px solid black;
+            border-radius: 16px;
+            background: #FCE181;
         }
 
         .transform { /*a CSS class to make the face grow, activated by the grow() function*/
@@ -75,6 +96,7 @@
             position: relative;
             left: 44px; /*Offset from left edge of <div> "wrapper", have to calculate so they are centered in the "wrapper" depending on the set "width" of ".dashBoard" */
             margin-bottom: 10px;
+            background: #9FEDD7;
         }
 
         #backgroundMusic { /*had to add extra CSS for the <audio> element because when "position" was "relative" extra spacing was placed around it throwing everything off, could not find source of spacing*/
@@ -84,10 +106,6 @@
 
         #scoreBoard {/*had to add extra CSS for the "scoreBoard" element to correct spacing because it sits on top of the "backgroundMusic" <audio> element because the <audio> element is removed from document flow via "position: absolute"*/
             left: 348px; /*Offset left by "left" property of ".dashBoard" + "width" & "border"s of "#backgroundMusic" <audio> element*/
-        }
-
-        p, h1 {
-            text-align: center;
         }
 
     </style>
@@ -108,34 +126,52 @@
         <div id="leftSide"></div>
         <div id="rightSide"></div>
 
-        <div id="difficultyButton" class="buttonBody"> <!--To make this button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
+ <!--To make these buttons work, they have to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
+
+        <div id="difficultyButton" class="buttonBody">
             Choose your difficulty level:
-            <div id="easy" class="divButton">
+            <div id="easy" class="buttonSelection">
                 Easy
             </div>
-            <div id="medium" class="divButton">
+            <div id="medium" class="buttonSelection">
                 Medium
             </div>
-            <div id="hard" class="divButton">
+            <div id="hard" class="buttonSelection">
                 Hard
             </div>
         </div>
 
-        <div id="restartButton" class="buttonBody"> <!--To make this button work, it has to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
+        <div id="restartButton" class="buttonBody">
             Restart game?
-            <div id="yes" class="divButton">
+            <div id="yes" class="buttonSelection">
                 Yes
             </div>
-            <div id="no" class="divButton">
+            <div id="no" class="buttonSelection">
                 No
             </div>
         </div>
 
-        <button type="button" id="congratulationsButton" class="buttonBody" onclick="hideCongratulationsButton()">Congratulations! You completed <span id="congratulationsButtonText"></span> levels!</button>
+        <div id="congratulationsButton" class="buttonBody">
+            Congratulations! You completed <span id="congratulationsButtonText"></span> levels!
+            <div onclick="hideCongratulationsButton()" class="buttonSelection">
+                Continue
+            </div>
+        </div>
 
-        <button type="button" id="gameOverButton" class="buttonBody" onclick="showRestartButton()">Game over! You completed <span id="gameOverButtonText"></span> levels!</button>
+        <div id="gameOverButton" class="buttonBody">
+            Game over! You completed <span id="gameOverButtonText"></span> levels!
+            <div onclick="showRestartButton()" class="buttonSelection">
+                Continue
+            </div>
+        </div>
 
-        <button type="button" id="quitterButton" class="buttonBody" onclick="showRestartButton()">Quitter!</button>
+        <div id="quitterButton" class="buttonBody">
+            Quitter!
+            <div onclick="showRestartButton()" class="buttonSelection">
+                Continue
+            </div>
+        </div>
+
 
         <audio id="sound3" src="/mp3s/sound3.mp3">Your browser does not support the audio element.</audio>
         <audio id="sound2" src="/mp3s/sound2.mp3">Your browser does not support the audio element.</audio>

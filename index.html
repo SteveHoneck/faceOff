@@ -23,6 +23,7 @@
             text-align: center;
             margin: 10px;
             color: #026670;
+            display: in;
         }
 
         div {
@@ -41,7 +42,7 @@
             margin-top: 10px; /*Drop down from top of browser window */
         }
 
-        img {
+        img { /*styling for the faces that are generated*/
             position: absolute;
             width: 75px;
         }
@@ -59,18 +60,6 @@
             border-left: 1px solid;
         }
 
-        .buttonSelection {
-            position: relative; /*allow positioning to be "realitive" to ".buttonBody" <div>*/
-            width: 75px;
-            height: 25px;
-            margin: 10px auto; /*10px top and bottom margin, left and right set to "auto" so the button selections are always centered horizontally (if all sides are auto, top and bottom margins are 0)*/
-            padding: 0.25em;
-            line-height: 25px; /*Trick for vertically centering the text, set "line-height" equal to the height of the element*/
-            border: 1px solid black;
-            border-radius: 16px;
-            background: #FEF9C7;
-        }
-
         .buttonBody {
             position: absolute;/*Set position to "absolute" so that the buttons are removed from the document flow/spacing and can appear on top of everything*/
             top: 50%; /*Move top of <div> down by 50% of containing block*/
@@ -81,6 +70,28 @@
             border: 1px solid black;
             border-radius: 16px;
             background: #FCE181;
+        }
+
+
+        .buttonSelection {
+            position: relative; /*allow positioning to be "realitive" to ".buttonBody" <div>*/
+            width: 75px;
+            height: 25px;
+            margin: 10px auto; /*10px top and bottom margin, left and right set to "auto" so the button selections are always centered horizontally (if all sides are auto, top and bottom margins are 0)*/
+            padding: 0.25em;
+            line-height: 25px; /*Trick for vertically centering the text, set "line-height" equal to the height of the element*/
+            border: 1px solid black;
+            border-radius: 16px;
+            background-color: rgb(254, 249, 199, 0.75); /*Set as rgb so opacity can also be set, opacity will be changed on "hover". Set opacity this way as opposed as to universal to ".buttonSelection" so that the text doesn't go opaque also*/
+            transition: 0.2s; /*Add "transition" here so that it will apply to "hover" into the button and out of the button. Also applies to "active" (clicking) state*/
+        }
+
+        .buttonSelection:hover {
+            background-color: rgb(254, 249, 199, 1); /*Change the opacity of the background color on mouse hover*/
+        }
+
+        .buttonSelection:active {
+            transform: translateY(6px); /*Move the button down by 6 pixles when clicked*/
         }
 
         .transform { /*a CSS class to make the face grow, activated by the grow() function*/
@@ -128,6 +139,7 @@
 
  <!--To make these buttons work, they have to come AFTER the leftSide and rightSide divs (alternatively, the z-index of the button body can be set and then it can be placed in any order)-->
 
+  <!--Could convert Difficulty and restart to buttons with inline "onclick" and remove "documentQuerySelector" and "eventListeners" in JS below-->
         <div id="difficultyButton" class="buttonBody">
             Choose your difficulty level:
             <div id="easy" class="buttonSelection">
@@ -151,23 +163,24 @@
             </div>
         </div>
 
+        <!--using "setTimeout" in the buttons below delays the JS funciton called until the button click CSS transformation happens-->
         <div id="congratulationsButton" class="buttonBody">
             Congratulations! You completed <span id="congratulationsButtonText"></span> levels!
-            <div onclick="hideCongratulationsButton()" class="buttonSelection">
+            <div onclick="setTimeout(hideCongratulationsButton, 200);" class="buttonSelection"> 
                 Continue
             </div>
         </div>
 
         <div id="gameOverButton" class="buttonBody">
             Game over! You completed <span id="gameOverButtonText"></span> levels!
-            <div onclick="showRestartButton()" class="buttonSelection">
+            <div onclick="setTimeout(showRestartButton, 200);" class="buttonSelection">
                 Continue
             </div>
         </div>
 
         <div id="quitterButton" class="buttonBody">
             Quitter!
-            <div onclick="showRestartButton()" class="buttonSelection">
+            <div onclick="setTimeout(showRestartButton, 200);" class="buttonSelection">
                 Continue
             </div>
         </div>
@@ -226,6 +239,7 @@
                 time--; //subtract "1" from the "time" variable
                 if (time > -1) { //"if" block added to allow timer to display the "0th" second, otherwise if the "if" condition was "time = 0" the "gamOver" function would display sooner than I would like it to
                     document.getElementById("currentTime").innerHTML =  time; //display the new "time" variable (which has been decremented by 1)
+//add inner "if" statement to warn user when 5 seconds are left (make a sound and/or make numbers colored)
                 } else {
                     gameOver(); //run the "gameOver" function
                 }
@@ -237,21 +251,31 @@
         }
 
         function setEasy() {
-            facesIncrement = 2; 
-            difficultyButton.hidden = true;
-            generateFaces();
+            function run() { //wrap all this in a function so that "setTimeout" can be used. Could convert to buttons with HTML inline "onclick" and remove "documentQuerySelector" and "eventListeners" JS and this "run" function.
+                facesIncrement = 2; 
+                difficultyButton.hidden = true;
+                generateFaces();
+            }
+            setTimeout(run,200);//using "setTimeout" delays the "run" funciton called until the button click CSS transformation happens
         }
 
+
         function setMedium() {
-            facesIncrement = 5; 
-            difficultyButton.hidden = true;
-            generateFaces();
+            function run() { //wrap all this in a function so that "setTimeout" can be used. Could convert to buttons with HTML inline "onclick" and remove "documentQuerySelector" and "eventListeners" JS and this "run" function.
+                facesIncrement = 5; 
+                difficultyButton.hidden = true;
+                generateFaces();
+            }
+            setTimeout(run,200);//using "setTimeout" delays the "run" funciton called until the button click CSS transformation happens
         }
 
         function setHard() {
-            facesIncrement = 8; 
-            difficultyButton.hidden = true;
-            generateFaces();
+            function run() { //wrap all this in a function so that "setTimeout" can be used. Could convert to buttons with HTML inline "onclick" and remove "documentQuerySelector" and "eventListeners" JS and this "run" function.
+                facesIncrement = 8; 
+                difficultyButton.hidden = true;
+                generateFaces();
+            }
+            setTimeout(run,200);//using "setTimeout" delays the "run" funciton called until the button click CSS transformation happens
         } 
 
         function generateFaces() {
@@ -341,6 +365,7 @@
 
         function gameOver() {
             backgroundMusic.pause(); //V9, pause background music if user hits "gameOver" function
+//Add a Buzzer sound to signify game over
             grow();//shows what the correct face would have been
             theLeftSide.lastChild.removeEventListener('click', nextLevel); //remove possibility of making the wrong choice then making the right choice and starting function nextLevel()
             for (node of leftSideNodes) {//removes game over to all faces on the left side
@@ -357,19 +382,25 @@
         }
 
         function restartYes() { //V7 - added function.  Mostly the same as the V6 code which was turned into the restart function when I started to work on V7. At the end of V7, I replaced the restart function with restartYes and restartNo functions.
-            removeFaces();
-            numberOfFaces = 0;
-            attempts = 0;
-            displayDifficultyButton();
-            congratulationsButton.hidden = true; //V7 - added to hide congrats button.Can't call hideCongratulationsButton() function here because it will generate faces which is not supposed to happen yet.
-            gameOverButton.hidden = true; //V7 - added to hide gameOver button.
-            restartButton.hidden = true; //V7 - added to hide restart button.
-            quitterButton.hidden = true; //V7 - added to hide quitter button.
+            function run() {//wrap all this in a function so that "setTimeout" can be used. Could convert to buttons with HTML inline "onclick" and remove "documentQuerySelector" and "eventListeners" JS and this "run" function.
+                removeFaces();
+                numberOfFaces = 0;
+                attempts = 0;
+                displayDifficultyButton();
+                congratulationsButton.hidden = true; //V7 - added to hide congrats button.Can't call hideCongratulationsButton() function here because it will generate faces which is not supposed to happen yet.
+                gameOverButton.hidden = true; //V7 - added to hide gameOver button.
+                restartButton.hidden = true; //V7 - added to hide restart button.
+                quitterButton.hidden = true; //V7 - added to hide quitter button.
+            }
+            setTimeout(run,200);//using "setTimeout" delays the "run" funciton called until the button click CSS transformation happens
         }
 
         function restartNo() { //V7 - added function.  Mostly the same as the V6 code which was turned into the restart function when I started to work on V7. At the end of V7, I replaced the restart function with restartYes and restartNo functions.
-            quitterButton.hidden = false; //V7 - added to show quitter button.
-            restartButton.hidden = true; //V7 - added to hide restart button.
+            function run() {//wrap all this in a function so that "setTimeout" can be used. Could convert to buttons with HTML inline "onclick" and remove "documentQuerySelector" and "eventListeners" JS and this "run" function.
+                quitterButton.hidden = false; //V7 - added to show quitter button.
+                restartButton.hidden = true; //V7 - added to hide restart button.
+            }
+            setTimeout(run,200);//using "setTimeout" delays the "run" funciton called until the button click CSS transformation happens
         }
 
     </script>

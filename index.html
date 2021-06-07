@@ -262,6 +262,8 @@
         restartButton.hidden = true; //V7 hide restart button on page load
         quitterButton.hidden = true; //V7 hide quitter button on page load
         
+        backgroundMusic.volume=0.1; //Set the default volume of the background music
+
         function timer() { //V8, function to control countdown timer
             let time = numberOfFaces //timer will be set to correspond with the number of faces (hence, the level) user is on. Must be inside the "timer" function because if it loads with all the other variable declarations, the "numberOfFaces" will not have been set yet.
             document.getElementById("currentTime").innerHTML = time; //Initial setting of the timer, over-ridden later within the "setInterval" function. Must be inside the "timer" function, if not, it causes all buttons to be visible when the webpage first loads.

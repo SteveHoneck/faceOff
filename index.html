@@ -11,6 +11,7 @@
     <link rel="preload" as="image" href="Images/Face1.png">
     <link rel="preload" as="image" href="Images/Face2.png">
     <link rel="preload" as="image" href="Images/Face3.png">
+    
     <style>
         body {
             width: 1024px; /*Width will be the size of "wrapper" <div (width + padding + borders). Adding this keeps other elements from moving around when resizing browser window because <body> does not resize (shrink)*/
@@ -224,7 +225,7 @@
     </div>
     <script>
 
-        const faceArray = ['images/face0.png', 'images/face1.png', 'images/face2.png', 'images/face3.png'];
+        const faceArray = ['Images/Face0.png', 'Images/Face1.png', 'Images/Face2.png', 'Images/Face3.png'];
         const theLeftSide = document.querySelector('#leftSide');
         const theRightSide = document.querySelector('#rightSide');
         
@@ -262,7 +263,7 @@
         restartButton.hidden = true; //V7 hide restart button on page load
         quitterButton.hidden = true; //V7 hide quitter button on page load
         
-        backgroundMusic.volume=0.1; //Set the default volume of the background music
+        backgroundMusic.volume=0.65; //Set the default volume of the background music
 
         function timer() { //V8, function to control countdown timer
             let time = numberOfFaces //timer will be set to correspond with the number of faces (hence, the level) user is on. Must be inside the "timer" function because if it loads with all the other variable declarations, the "numberOfFaces" will not have been set yet.
@@ -289,7 +290,7 @@
                 difficultyButton.hidden = true;
                 generateFaces();
             }
-            setTimeout(run,200);//using "setTimeout" delays the "run" funciton called until the button click CSS transformation happens
+            setTimeout(run, 200);//using "setTimeout" delays the "run" funciton called until the button click CSS transformation happens
         }
 
 
@@ -299,7 +300,7 @@
                 difficultyButton.hidden = true;
                 generateFaces();
             }
-            setTimeout(run,200);//using "setTimeout" delays the "run" funciton called until the button click CSS transformation happens
+            setTimeout(run, 200);//using "setTimeout" delays the "run" funciton called until the button click CSS transformation happens
         }
 
         function setHard() {
@@ -308,7 +309,7 @@
                 difficultyButton.hidden = true;
                 generateFaces();
             }
-            setTimeout(run,200);//using "setTimeout" delays the "run" funciton called until the button click CSS transformation happens
+            setTimeout(run, 200);//using "setTimeout" delays the "run" funciton called until the button click CSS transformation happens
         } 
 
         function generateFaces() {

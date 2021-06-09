@@ -132,16 +132,24 @@
             top: 50%;
             transform: translate(0, -50%);
             margin-left: 20px;
+            background: none; /*background does not work well with mobile */
+            border: none; /*border does not work well with mobile  */
         }
 
         #currentLevel, #currentTime { /*Make the Time and Level larger than their label text*/
             font-size: 48px;
             vertical-align: middle;
+            display: inline-block; /*"#currentTime" must be in a <div> element which defaults to "block", must be changed to "inline" to line up with "Time" text and "block" so that the "transform: scale()" works*/
+            transition-duration: .450s; /*Added so that "lowTime" animation will last sligtly less than the "setTimeout" countdown of 0.5s in order to ensure the "lowTime" grow animation completely finishes */
         }
 
         .dashBoardText {
             font-size: 24px;
             vertical-align: middle;
+        }
+
+        .lowTime { /*Added so that "currentTime" can grow when time gets low, activated in the "timer" function*/
+            transform: scale(1.25);
         }
 
     </style>
@@ -153,13 +161,13 @@
 
         <div class="dashBoardBox">
             <div id="timer" class="dashBoard"> <!--V8-->
-                <span class="dashBoardText">Time:</span> <span id="currentTime"></span>
+                <span class="dashBoardText">Time:</span> <div id="currentTime">0</div>
             </div>
 
             <p>There is an extra face hiding on the left side.<br>Click it to move on to the next level!</p>
 
             <div id="scoreBoard" class="dashBoard"> <!--V9-->
-                <span class="dashBoardText">Level:</span> <span id="currentLevel"></span>
+                <span class="dashBoardText">Level:</span> <span id="currentLevel">0</span>
             </div>
 
             <audio id="backgroundMusic" class="dashBoard" src="mp3s/Boccherini_Concerto_478-1.mp3" controls loop>Your browser does not support HTML5 audio.</audio><!--V9, added background music-->
@@ -196,14 +204,14 @@
 
         <!--using "setTimeout" in the buttons below delays the JS funciton called until the button click CSS transformation happens-->
         <div id="congratulationsButton" class="buttonBody">
-            Congratulations! You completed <span id="congratulationsButtonText"></span> levels!
+            Congratulations! You completed <span id="congratulationsButtonText"></span>
             <div onclick="setTimeout(hideCongratulationsButton, 200);" class="buttonSelection"> 
                 Continue
             </div>
         </div>
 
         <div id="gameOverButton" class="buttonBody">
-            Game over! You completed <span id="gameOverButtonText"></span> levels!
+            Game over! You completed <span id="gameOverButtonText"></span>
             <div onclick="setTimeout(showRestartButton, 200);" class="buttonSelection">
                 Continue
             </div>
@@ -215,14 +223,16 @@
                 Continue
             </div>
         </div>
-
+    </div>
 
         <audio id="sound3" src="/mp3s/sound3.mp3">Your browser does not support the audio element.</audio>
         <audio id="sound2" src="/mp3s/sound2.mp3">Your browser does not support the audio element.</audio>
         <audio id="sound0" src="/mp3s/sound0.mp3">Your browser does not support the audio element.</audio>
         <audio id="sound1" src="/mp3s/sound1.mp3">Your browser does not support the audio element.</audio>
         <audio id="wrong" src="/mp3s/wrong.mp3">Your browser does not support the audio element.</audio>
-    </div>
+        <audio id="tick" src="../mp3s/tick.mp3">Your browser does not support the audio element.</audio>
+        <audio id="tock" src="../mp3s/tock.mp3">Your browser does not support the audio element.</audio> 
+    
     <script>
 
         const faceArray = ['Images/Face0.png', 'Images/Face1.png', 'Images/Face2.png', 'Images/Face3.png'];
@@ -249,6 +259,7 @@
         let quitterButton = document.querySelector('#quitterButton'); //V7
         let countdownTimer //V8, must be declared here so that it is available globally so ""clearInterval" can use it elsewhere in the code
         let backgroundMusic = document.querySelector('#backgroundMusic');//v9, make the embedded background music available to JS code
+        let currentTime = document.querySelector('#currentTime') //Make current Time text available for manipulation in JS
 
 
         easy.addEventListener('click', setEasy);
@@ -267,13 +278,23 @@
 
         function timer() { //V8, function to control countdown timer
             let time = numberOfFaces //timer will be set to correspond with the number of faces (hence, the level) user is on. Must be inside the "timer" function because if it loads with all the other variable declarations, the "numberOfFaces" will not have been set yet.
-            document.getElementById("currentTime").innerHTML = time; //Initial setting of the timer, over-ridden later within the "setInterval" function. Must be inside the "timer" function, if not, it causes all buttons to be visible when the webpage first loads.
-
+            currentTime.style.color = "#026670";//Reset current time text to default color (in case it was red due to low time) 
+            currentTime.innerHTML = time; //Initial setting of the timer, over-ridden later within the "setInterval" function. Must be inside the "timer" function, if not, it causes all buttons to be visible when the webpage first loads.
+            
             countdownTimer = setInterval(function() { //use "setInterval" to run "function" every second ("1000" as second argument to "setInterval" sets it to run every 1 second). Can't declare "countdownTimer" inside this function because "countdownTimer" needs to be available globally so that "clearInterval" can be called in other areas of the code.
-                time--; //subtract "1" from the "time" variable
-                if (time > -1) { //"if" block added to allow timer to display the "0th" second, otherwise if the "if" condition was "time = 0" the "gamOver" function would display sooner than I would like it to
+                time--; //subtract "1" from the "time" variable. Due to how the code in the "if" statements is written, "time" will = -1 before the timer is stopped.
+                if ( time < 3 & time >= 0 ) { //Apply these styles if the time is less than 3 to warn user time is low. "time >= 0" added to make sure the inner code is not run when "time = -1" which would make an extra tick-tock & grow animation happen  
+                    currentTime.classList.add("lowTime");
+                    document.querySelector('#tick').play();
+                    currentTime.style.color="red";
+                    
+                    setTimeout( function() {
+                        document.querySelector('#tock').play();
+                        currentTime.classList.remove("lowTime");
+                    }, 500);
+                }
+                if ( time >= 0 ) { //"if" block added to allow timer to display the "0th" second, otherwise if the "if" condition was "time = 0" the "gamOver" function would display before the timer displayed 0
                     document.getElementById("currentTime").innerHTML =  time; //display the new "time" variable (which has been decremented by 1)
-//add inner "if" statement to warn user when 5 seconds are left (make a sound and/or make numbers colored)
                 } else {
                     gameOver(); //run the "gameOver" function
                 }
@@ -382,7 +403,11 @@
         }
 
         function congratulations() {
-            document.getElementById("congratulationsButtonText").innerHTML = attempts; //V7 - Adds the variable attempts to the text in the congrats button.
+            if (attempts === 1) { //Added so that if only 1 level was completed, the congratulations text would have the proper "level" instead of "levels"
+                document.getElementById("congratulationsButtonText").innerHTML = attempts + ' level!'; //V7 - Adds the variable attempts to the text in the congrats button.
+            } else {
+                document.getElementById("congratulationsButtonText").innerHTML = attempts + ' levels!'; //V7 - Adds the variable attempts to the text in the congrats button.
+            }
             for (node of leftSideNodes) {//V7 removes gameOver from all incorrect faces on the left side and nextLevel & grow from the correct face. Keeps user from causing these functions to run if they happen to click on something other than Congrats button.
                 node.removeEventListener('click', gameOver);
                 node.removeEventListener('click', nextLevel);
@@ -405,7 +430,11 @@
             for (node of leftSideNodes) {//removes game over to all faces on the left side
                 node.removeEventListener('click', gameOver); //remove the possiblity of clicking on a wrong face once the game is over and re-runing the gameOver() function
             }
-            document.getElementById("gameOverButtonText").innerHTML = attempts; //V7 - Adds the variable attempts to the text in the gameOver button.
+            if (attempts === 1) { //Added so that if only 1 level was completed, the game over text would have the proper "level" instead of "levels"
+                document.getElementById("gameOverButtonText").innerHTML = attempts + ' level!'; //V7 - Adds the variable attempts to the text in the gameOver button.
+            } else {
+                document.getElementById("gameOverButtonText").innerHTML = attempts + ' levels!'; //V7 - Adds the variable attempts to the text in the gameOver button.
+            }
             gameOverButton.hidden = false; //V7 - show gameOver button who's click will activate showRestartButton function.
         }
 

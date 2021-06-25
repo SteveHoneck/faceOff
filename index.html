@@ -164,7 +164,7 @@
                 <span class="dashBoardText">Time:</span> <div id="currentTime">0</div>
             </div>
 
-            <p>There is an extra face hiding on the left side.<br>Click it to move on to the next level!</p>
+            <p>Below are two nearly identical images.<br>Click the extra face hiding on the left side!</p>
 
             <div id="scoreBoard" class="dashBoard"> <!--V9-->
                 <span class="dashBoardText">Level:</span> <span id="currentLevel">0</span>
@@ -278,12 +278,15 @@
 
         function timer() { //V8, function to control countdown timer
             let time = numberOfFaces //timer will be set to correspond with the number of faces (hence, the level) user is on. Must be inside the "timer" function because if it loads with all the other variable declarations, the "numberOfFaces" will not have been set yet.
+            if (time < 5) { //"if" block added to address the first two levels of "easy" mode. The low time warning starts at 3 seconds, the first level of easy starts the timer at 2 (already in the low time warning) and second level starts timer at 4 (1 second away from warning). Setting both of these levels to 5 second timer gives user some time to figure things out
+                time = 5;
+            }
             currentTime.style.color = "#026670";//Reset current time text to default color (in case it was red due to low time) 
             currentTime.innerHTML = time; //Initial setting of the timer, over-ridden later within the "setInterval" function. Must be inside the "timer" function, if not, it causes all buttons to be visible when the webpage first loads.
             
             countdownTimer = setInterval(function() { //use "setInterval" to run "function" every second ("1000" as second argument to "setInterval" sets it to run every 1 second). Can't declare "countdownTimer" inside this function because "countdownTimer" needs to be available globally so that "clearInterval" can be called in other areas of the code.
                 time--; //subtract "1" from the "time" variable. Due to how the code in the "if" statements is written, "time" will = -1 before the timer is stopped.
-                if ( time < 3 & time >= 0 ) { //Apply these styles if the time is less than 3 to warn user time is low. "time >= 0" added to make sure the inner code is not run when "time = -1" which would make an extra tick-tock & grow animation happen  
+                if ( time < 4 & time >= 0 ) { //Apply these styles if the time is less than 4 to warn user time is low. "time >= 0" added to make sure the inner code is not run when "time = -1" which would make an extra tick-tock & grow animation happen  
                     currentTime.classList.add("lowTime");
                     document.querySelector('#tick').play();
                     currentTime.style.color="red";

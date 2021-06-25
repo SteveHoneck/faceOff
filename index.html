@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <title>Face Off!</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Port+Lligat+Sans&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Odibee+Sans&display=swap" rel="stylesheet"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Londrina+Shadow&display=swap" rel="stylesheet">  
     <!--Preload all images so mobile loads faces faster (sometimes, timer would run out before all faces were fetched)-->
     <link rel="preload" as="image" href="Images/Face0.png">
     <link rel="preload" as="image" href="Images/Face1.png">
@@ -16,26 +16,28 @@
         body {
             width: 1024px; /*Width will be the size of "wrapper" <div (width + padding + borders). Adding this keeps other elements from moving around when resizing browser window because <body> does not resize (shrink)*/
             margin: auto; /*Keeps everything centered */
-            font-family: 'Port Lligat Sans', sans-serif;
+            font-family: 'Lato', sans-serif;
+            
         }
         
         h1 {
             font-size: 75px;
             text-align: center;
-            margin: 30px 10px 0 10px;
-            font-family: 'Odibee Sans', cursive;
-        }
+            margin: 15px 10px 0 10px;
+            font-family: 'Londrina Shadow', cursive;
+            color:rgb(245, 220, 94)   
+            }
 
         p {
             font-size: 24px;
             margin: 10px;
-            color: #026670;
+            color: white;
             display: inline-block;
             vertical-align: middle;
         }
 
         div {
-            color: #026670;
+            color: black;
         }
 
         .wrapper {
@@ -45,7 +47,7 @@
             height: 690px; /*Calculated to go beyond "leftSide" and "rightSide" by Xpx: turn "height" off to see what auto-generated height is, then add height "left/rightSide" height + "left/rightSide" top & bottom borders*/
             width: 1014px; /*Width is the width of "leftSide" + "rightSide" + their borders + 10 for space between the two sides (this does not include the "padding" of the ".wrapper" <div>*/
             padding: 0 10px 10px 10px;
-            background-color: #cfccc6;
+            background-color: #62a6ff;
             margin-top: 10px; /*Drop down from top of browser window*/
         }
 
@@ -60,7 +62,7 @@
             height: 500px;
             border: 1px solid black;
             border-radius: 16px;
-            background-color: #EDEAE5;
+            background-color:rgb(255, 255, 255, 0.7);
         }
 
         #rightSide {
@@ -69,6 +71,7 @@
 
         #rightSide #leftSide { /*Select any <div> with ID of "leftSide" that is a descendant of a element with ID "rightSide" and remove the border. This keeps the copied "leftSide" node from making a double thick border on when it placed over the "rightSide" */
             border: none;
+            background-color: rgb(255, 255, 255, 0);
         }
 
         .buttonBody {
@@ -80,7 +83,7 @@
             text-align: center; /*Center all text inside the "buttonBody" <div> and the "buttonSelection" <div>s*/
             border: 1px solid black;
             border-radius: 16px;
-            background:rgb(254, 249, 199);
+            background: rgb(240, 241, 190);
         }
 
 
@@ -93,12 +96,12 @@
             line-height: 25px; /*Trick for vertically centering the text, set "line-height" equal to the height of the element*/
             border: 1px solid black;
             border-radius: 16px;
-            background-color: rgb(252, 225, 129, 0.40); /*Set as rgb so opacity can also be set, opacity will be changed on "hover". Set opacity this way as opposed as to universal to ".buttonSelection" so that the text doesn't go opaque also*/
+            background-color: rgb(245, 220, 94); /*Set as rgb so opacity can also be set, opacity will be changed on "hover". Set opacity this way as opposed as to universal to ".buttonSelection" so that the text doesn't go opaque also*/
             transition: 0.2s; /*Add "transition" here so that it will apply to "hover" into the button and out of the button. Also applies to "active" (clicking) state*/
         }
 
         .buttonSelection:hover {
-            background-color: rgb(252, 225, 129, 1); /*Change the opacity of the background color on mouse hover*/
+            background-color: goldenrod; /*Change the opacity of the background color on mouse hover*/
         }
 
         .buttonSelection:active {
@@ -123,7 +126,7 @@
             width: 175px;
             border-radius: 16px;
             border: 1px solid black;
-            background: #9FEDD7;
+            background-color:rgb(255, 255, 255, 0.7);
         }
 
         #backgroundMusic { /*had to add extra CSS for the <audio> element because when "position" was "relative" extra spacing was placed around it throwing everything off, could not find source of spacing*/
@@ -164,7 +167,7 @@
                 <span class="dashBoardText">Time:</span> <div id="currentTime">0</div>
             </div>
 
-            <p>Below are two nearly identical images.<br>Click the extra face hiding on the left side!</p>
+            <p>Click the extra face hiding on the left side!</p>
 
             <div id="scoreBoard" class="dashBoard"> <!--V9-->
                 <span class="dashBoardText">Level:</span> <span id="currentLevel">0</span>
@@ -281,7 +284,7 @@
             if (time < 5) { //"if" block added to address the first two levels of "easy" mode. The low time warning starts at 3 seconds, the first level of easy starts the timer at 2 (already in the low time warning) and second level starts timer at 4 (1 second away from warning). Setting both of these levels to 5 second timer gives user some time to figure things out
                 time = 5;
             }
-            currentTime.style.color = "#026670";//Reset current time text to default color (in case it was red due to low time) 
+            currentTime.style.color = "black";//Reset current time text to default color (in case it was red due to low time) 
             currentTime.innerHTML = time; //Initial setting of the timer, over-ridden later within the "setInterval" function. Must be inside the "timer" function, if not, it causes all buttons to be visible when the webpage first loads.
             
             countdownTimer = setInterval(function() { //use "setInterval" to run "function" every second ("1000" as second argument to "setInterval" sets it to run every 1 second). Can't declare "countdownTimer" inside this function because "countdownTimer" needs to be available globally so that "clearInterval" can be called in other areas of the code.
